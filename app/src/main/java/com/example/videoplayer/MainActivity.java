@@ -6,8 +6,10 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,11 +19,14 @@ public class MainActivity extends AppCompatActivity {
 
     private VideoView mVideoView;
 
+    private TextView mTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mVideoView = findViewById(R.id.video_view);
+        mTextView = findViewById(R.id.tv_buffer);
 
         MediaController controller = new MediaController(this);
         controller.setMediaPlayer(mVideoView);
@@ -31,6 +36,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 mVideoView.seekTo(1);
+                mVideoView.start();
+            }
+        });
+
+        // Hide text view ketika mau ngeplay
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mTextView.setVisibility(VideoView.INVISIBLE);
+
                 mVideoView.start();
             }
         });
@@ -47,10 +62,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initializePlayer() {
-//        // Memanggil video dari local
+        // Memanggil video dari local
 //        Uri videoUri = getMedia(LOCAL_VIDEO);
 //        mVideoView.setVideoURI(videoUri);
-        // Memanggil video dari local
+        // Memanggil video dari online
+        mTextView.setVisibility(VideoView.VISIBLE);
         Uri videoUri = getMedia(ONLINE_VIDEO);
         mVideoView.setVideoURI(videoUri);
         mVideoView.start();
